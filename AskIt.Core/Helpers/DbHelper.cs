@@ -1,5 +1,5 @@
-﻿using AskIt.Core.Configuration;
-using AskIt.Core.Constants;
+﻿using ATMCompass.Core.Configuration;
+using ATMCompass.Core.Constants;
 using Microsoft.AspNetCore.Identity;
 
 namespace ATMCompass.Core.Helpers

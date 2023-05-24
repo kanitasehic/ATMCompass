@@ -1,4 +1,4 @@
-﻿namespace AskIt.Core.Exceptions
+﻿namespace ATMCompass.Core.Exceptions
 {
     public class NotAllowedException : Exception
     {

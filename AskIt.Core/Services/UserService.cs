@@ -1,16 +1,16 @@
-﻿using AskIt.Core.Configuration;
-using AskIt.Core.Constants;
-using AskIt.Core.Exceptions;
-using AskIt.Core.Interfaces.Services;
-using AskIt.Core.Models.Users.Requests;
-using AskIt.Core.Models.Users.Responses;
+﻿using ATMCompass.Core.Configuration;
+using ATMCompass.Core.Constants;
+using ATMCompass.Core.Exceptions;
+using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Models.Users.Requests;
+using ATMCompass.Core.Models.Users.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace AskIt.Core.Services
+namespace ATMCompass.Core.Services
 {
     public class UserService : IUserService
     {

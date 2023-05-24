@@ -1,9 +1,9 @@
-﻿using AskIt.Core.Exceptions;
+﻿using ATMCompass.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 
-namespace AskIt.Filters
+namespace ATMCompass.Filters
 {
     public class ExceptionFilter : IExceptionFilter
     {

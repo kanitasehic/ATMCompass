@@ -1,7 +1,7 @@
-﻿using AskIt.Core.Configuration;
-using AskIt.Core.Interfaces.Services;
-using AskIt.Core.Services;
-using AskIt.Insfrastructure.Data;
+﻿using ATMCompass.Core.Configuration;
+using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Services;
+using ATMCompass.Insfrastructure.Data;
 using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Interfaces.Services;
 using ATMCompass.Core.Services;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace AskIt.Extensions
+namespace ATMCompass.Extensions
 {
     public static class ServiceExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace AskIt.Core.Configuration
+﻿namespace ATMCompass.Core.Configuration
 {
     public class AdminCredentials
     {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace AskIt.Insfrastructure.Data
+namespace ATMCompass.Insfrastructure.Data
 {
     public class ATMCompassDbContext : IdentityDbContext
     {

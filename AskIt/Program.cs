@@ -1,7 +1,7 @@
-using AskIt.Core.Configuration;
-using AskIt.Core.Mappings;
-using AskIt.Extensions;
-using AskIt.Insfrastructure.Data;
+using ATMCompass.Core.Configuration;
+using ATMCompass.Core.Mappings;
+using ATMCompass.Extensions;
+using ATMCompass.Insfrastructure.Data;
 using ATMCompass.Core.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

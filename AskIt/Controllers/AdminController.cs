@@ -1,14 +1,12 @@
-﻿using AskIt.Core.Constants;
-using AskIt.Filters;
+﻿using ATMCompass.Filters;
 using ATMCompass.Core.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ATMCompass.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize(Roles = Roles.ADMIN_ROLE)]
+    [Authorize(Roles = Roles.ADMIN_ROLE)]
     [TypeFilter(typeof(ExceptionFilter))]
     public class AdminController : ControllerBase
     {

@@ -1,4 +1,4 @@
-﻿namespace AskIt.Core.Models
+﻿namespace ATMCompass.Core.Models
 {
     public class PagedGridItems<T>
     {

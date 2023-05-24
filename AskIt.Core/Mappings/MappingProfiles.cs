@@ -2,7 +2,7 @@
 using ATMCompass.Core.Models.ATMs.OverpassAPI;
 using AutoMapper;
 
-namespace AskIt.Core.Mappings
+namespace ATMCompass.Core.Mappings
 {
     public class MappingProfiles : Profile
     {

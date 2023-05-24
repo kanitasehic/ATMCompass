@@ -1,4 +1,4 @@
-﻿using AskIt.Insfrastructure.Data;
+﻿using ATMCompass.Insfrastructure.Data;
 using ATMCompass.Core.Entities;
 using ATMCompass.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;

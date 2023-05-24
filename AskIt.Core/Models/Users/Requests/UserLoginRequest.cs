@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AskIt.Core.Models.Users.Requests
+namespace ATMCompass.Core.Models.Users.Requests
 {
     public class UserLoginRequest
     {

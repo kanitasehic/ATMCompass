@@ -1,4 +1,4 @@
-﻿namespace AskIt.Core.Constants
+﻿namespace ATMCompass.Core.Constants
 {
     public static class ErrorMessages
     {

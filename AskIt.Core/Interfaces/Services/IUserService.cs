@@ -1,7 +1,7 @@
-﻿using AskIt.Core.Models.Users.Requests;
-using AskIt.Core.Models.Users.Responses;
+﻿using ATMCompass.Core.Models.Users.Requests;
+using ATMCompass.Core.Models.Users.Responses;
 
-namespace AskIt.Core.Interfaces.Services
+namespace ATMCompass.Core.Interfaces.Services
 {
     public interface IUserService
     {

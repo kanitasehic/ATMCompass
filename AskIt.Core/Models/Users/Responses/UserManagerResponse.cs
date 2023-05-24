@@ -1,4 +1,4 @@
-﻿namespace AskIt.Core.Models.Users.Responses
+﻿namespace ATMCompass.Core.Models.Users.Responses
 {
     public class UserManagerResponse
     {

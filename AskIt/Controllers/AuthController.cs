@@ -1,7 +1,7 @@
-﻿using AskIt.Core.Interfaces.Services;
-using AskIt.Core.Models.Users.Requests;
-using AskIt.Core.Models.Users.Responses;
-using AskIt.Filters;
+﻿using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Models.Users.Requests;
+using ATMCompass.Core.Models.Users.Responses;
+using ATMCompass.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ATMCompass.Controllers
