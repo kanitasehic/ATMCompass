@@ -1,6 +1,6 @@
-﻿namespace ATMCompass.Core.Entities
+﻿namespace ATMCompass.Core.Models.ATMs.Responses
 {
-    public sealed class ATM
+    public class AddATMResponse
     {
         public int Id { get; set; }
 

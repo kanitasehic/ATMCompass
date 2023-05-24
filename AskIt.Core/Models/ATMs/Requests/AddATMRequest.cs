@@ -1,13 +1,13 @@
-﻿namespace ATMCompass.Core.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ATMCompass.Core.Models.ATMs.Requests
 {
-    public sealed class ATM
+    public class AddATMRequest
     {
-        public int Id { get; set; }
-
-        public string? ExternalId { get; set; }
-
+        [Required]
         public string Lat { get; set; }
 
+        [Required]
         public string Lon { get; set; }
 
         public bool? IsAccessibleUsingWheelchair { get; set; }

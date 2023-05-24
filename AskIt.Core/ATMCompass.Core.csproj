@@ -15,8 +15,6 @@
 
   <ItemGroup>
     <Folder Include="Enums\" />
-    <Folder Include="Models\ATMs\Responses\" />
-    <Folder Include="Models\ATMs\Requests\" />
   </ItemGroup>
 
 </Project>

@@ -1,14 +1,10 @@
-﻿namespace ATMCompass.Core.Entities
+﻿namespace ATMCompass.Core.Models.ATMs.Requests
 {
-    public sealed class ATM
+    public class UpdateATMRequest
     {
-        public int Id { get; set; }
+        public string? Lat { get; set; }
 
-        public string? ExternalId { get; set; }
-
-        public string Lat { get; set; }
-
-        public string Lon { get; set; }
+        public string? Lon { get; set; }
 
         public bool? IsAccessibleUsingWheelchair { get; set; }
 

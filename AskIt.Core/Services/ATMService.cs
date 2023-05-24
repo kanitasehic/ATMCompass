@@ -1,6 +1,9 @@
 ﻿using ATMCompass.Core.Entities;
+using ATMCompass.Core.Exceptions;
 using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Core.Models.ATMs.Responses;
 using AutoMapper;
 
 namespace ATMCompass.Core.Services
@@ -34,6 +37,35 @@ namespace ATMCompass.Core.Services
             var atmsWithUpdatedLocation = await GetATMsWithUpdatedLocationAsync(atms);
 
             await _ATMRepository.AddMultipleATMsAsync(atmsWithUpdatedLocation);
+        }
+
+        public async Task<AddATMResponse> AddATMAsync(AddATMRequest atm)
+        {
+            var newAtm = _mapper.Map<ATM>(atm);
+
+            return _mapper.Map<AddATMResponse>(await _ATMRepository.AddATMAsync(newAtm));
+        }
+
+        public async Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest)
+        {
+            var atm = await _ATMRepository.GetATMById(id);
+
+            if (atm is null)
+                throw new NotFoundException($"ATM with id {id} does not exist.");
+
+            atm = _mapper.Map(atmUpdateRequest, atm);
+
+            await _ATMRepository.UpdateATMAsync(atm);
+        }
+
+        public async Task DeleteATMAsync(int id)
+        {
+            var atm = await _ATMRepository.GetATMById(id);
+
+            if (atm is null)
+                throw new NotFoundException($"ATM with id {id} does not exist.");
+
+            await _ATMRepository.DeleteATMAsync(atm);
         }
 
         private async Task<IList<ATM>> GetATMsWithUpdatedLocationAsync(IList<ATM> atms)
