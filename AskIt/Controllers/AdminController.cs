@@ -1,6 +1,8 @@
 ﻿using ATMCompass.Filters;
 using ATMCompass.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using ATMCompass.Core.Constants;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ATMCompass.Controllers
 {

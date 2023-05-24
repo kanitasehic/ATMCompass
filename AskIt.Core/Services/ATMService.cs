@@ -21,33 +21,33 @@ namespace ATMCompass.Core.Services
 
         public async Task SynchronizeATMDataAsync()
         {
-            var rawATMsData = await _overpassAPIClient.GetATMsInBosniaAndHerzegovinaAsync();
-            var existingATMExternalIds = await _ATMRepository.GetAllExternalIdsAsync();
+            var rawAtmsData = await _overpassAPIClient.GetATMsInBosniaAndHerzegovinaAsync();
+            var existingAtmExternalIds = await _ATMRepository.GetAllExternalIdsAsync();
 
             // sync OSM and DB data by adding only new ATMs to the DB
-            if(existingATMExternalIds.Any())
+            if(existingAtmExternalIds.Any())
             {
-                rawATMsData = rawATMsData.Where(a => !existingATMExternalIds.Contains(a.Id)).ToList();
+                rawAtmsData = rawAtmsData.Where(a => !existingAtmExternalIds.Contains(a.Id)).ToList();
             }
 
-            var ATMs = _mapper.Map<IList<ATM>>(rawATMsData);
-            var ATMsWithUpdatedLocation = await GetATMsWithUpdatedLocationAsync(ATMs);
+            var atms = _mapper.Map<IList<ATM>>(rawAtmsData);
+            var atmsWithUpdatedLocation = await GetATMsWithUpdatedLocationAsync(atms);
 
-            await _ATMRepository.AddMultipleATMsAsync(ATMsWithUpdatedLocation);
+            await _ATMRepository.AddMultipleATMsAsync(atmsWithUpdatedLocation);
         }
 
-        private async Task<IList<ATM>> GetATMsWithUpdatedLocationAsync(IList<ATM> ATMs)
+        private async Task<IList<ATM>> GetATMsWithUpdatedLocationAsync(IList<ATM> atms)
         {
-            foreach (var ATM in ATMs)
+            foreach (var atm in atms)
             {
-                if(ATM.Location is null)
+                if(atm.Location is null)
                 {
-                    var location = await _geoCodeClient.GetLocationByCoordinatesAsync(ATM.Lat, ATM.Lon);
-                    ATM.Location = string.IsNullOrEmpty(location.City) ? location.Locality : location.City;
+                    var location = await _geoCodeClient.GetLocationByCoordinatesAsync(atm.Lat, atm.Lon);
+                    atm.Location = string.IsNullOrEmpty(location.City) ? location.Locality : location.City;
                 }
             }
 
-            return ATMs;
+            return atms;
         }
     }
 }

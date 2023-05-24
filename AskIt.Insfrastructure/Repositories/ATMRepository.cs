@@ -19,10 +19,15 @@ namespace ATMCompass.Insfrastructure.Repositories
             return await _dbContext.ATMs.Select(a => a.ExternalId).ToListAsync();
         }
 
-        public async Task AddMultipleATMsAsync(IList<ATM> ATMs)
+        public async Task AddMultipleATMsAsync(IList<ATM> atms)
         {
-            await _dbContext.ATMs.AddRangeAsync(ATMs);
+            await _dbContext.ATMs.AddRangeAsync(atms);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<ATM> AddATMAsync(ATM atm)
+        {
+
         }
     }
 }

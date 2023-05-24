@@ -6,6 +6,6 @@ namespace ATMCompass.Core.Interfaces.Repositories
     {
         Task<IList<string>> GetAllExternalIdsAsync();
 
-        Task AddMultipleATMsAsync(IList<ATM> ATMs);
+        Task AddMultipleATMsAsync(IList<ATM> atms);
     }
 }
