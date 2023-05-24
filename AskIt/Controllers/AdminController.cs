@@ -1,0 +1,31 @@
+﻿using AskIt.Core.Constants;
+using AskIt.Filters;
+using ATMCompass.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ATMCompass.Controllers
+{
+    [Route("[controller]")]
+    [ApiController]
+    //[Authorize(Roles = Roles.ADMIN_ROLE)]
+    [TypeFilter(typeof(ExceptionFilter))]
+    public class AdminController : ControllerBase
+    {
+        private readonly IATMService _ATMService;
+        private readonly string _loggedUserId;
+
+        public AdminController(IATMService ATMService)
+        {
+            _ATMService = ATMService;
+        }
+
+        [HttpPost("atms/sync")]
+        public async Task<IActionResult> SynchronizeATMData()
+        {
+            await _ATMService.SynchronizeATMDataAsync();
+
+            return Ok();
+        }
+    }
+}
