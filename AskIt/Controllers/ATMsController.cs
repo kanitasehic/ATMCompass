@@ -1,5 +1,6 @@
-﻿using ATMCompass.Filters;
-using ATMCompass.Core.Interfaces.Services;
+﻿using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ATMCompass.Controllers
@@ -17,9 +18,10 @@ namespace ATMCompass.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetATMs()
+        public async Task<IActionResult> GetATMs([FromQuery] GetATMsRequest request)
         {
-            return Ok();
+            var atms = await _ATMService.GetATMsAsync(request);
+            return Ok(atms);
         }
     }
 }

@@ -2,6 +2,7 @@
 using ATMCompass.Core.Entities;
 using ATMCompass.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using ATMCompass.Core.Models.ATMs.Requests;
 
 namespace ATMCompass.Insfrastructure.Repositories
 {
@@ -12,6 +13,30 @@ namespace ATMCompass.Insfrastructure.Repositories
         public ATMRepository(ATMCompassDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<IList<ATM>> GetATMsAsync(GetATMsRequest request)
+        {
+            var query = _dbContext.ATMs.AsQueryable();
+
+            /*if(request.BankName is not null)
+            {
+                query = query.Where(a => a.Name == request.BankName);
+            }
+            if(request.Location is not null)
+            {
+                query = query.Where(a => a.Location == request.Location);
+            }
+            if(request.IsAccessibleUsingWheelchair is not null)
+            {
+                query = query.Where(a => a.IsAccessibleUsingWheelchair == request.IsAccessibleUsingWheelchair);
+            }
+            if(request.IsDriveThroughEnabled is not null)
+            {
+                query = query.Where(a => a.IsDriveThroughEnabled == request.IsDriveThroughEnabled);
+            }*/
+
+            return await query.ToListAsync();
         }
 
         public async Task<IList<string>> GetAllExternalIdsAsync()
@@ -26,13 +51,22 @@ namespace ATMCompass.Insfrastructure.Repositories
 
         public async Task AddMultipleATMsAsync(IList<ATM> atms)
         {
-            await _dbContext.ATMs.AddRangeAsync(atms);
-            await _dbContext.SaveChangesAsync();
-        }
+            foreach (var atm in atms)
+            {
+                await AddATMAsync(atm);
+            }
+        } 
 
         public async Task<ATM> AddATMAsync(ATM atm)
         {
+            await _dbContext.Nodes.AddAsync(atm.Node);
+            await _dbContext.Banks.AddAsync(atm.Bank);
+            await _dbContext.Addresses.AddAsync(atm.Address);
+            await _dbContext.Brands.AddAsync(atm.Brand);
+            await _dbContext.Operators.AddAsync(atm.Operator);
+            await _dbContext.Currencies.AddAsync(atm.Currency);
             await _dbContext.ATMs.AddAsync(atm);
+
             await _dbContext.SaveChangesAsync();
             return atm;
         }

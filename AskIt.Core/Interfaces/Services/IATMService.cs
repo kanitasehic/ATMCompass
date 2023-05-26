@@ -5,6 +5,8 @@ namespace ATMCompass.Core.Interfaces.Services
 {
     public interface IATMService
     {
+        Task<IList<GetATMResponse>> GetATMsAsync(GetATMsRequest request);
+
         Task SynchronizeATMDataAsync();
 
         Task<AddATMResponse> AddATMAsync(AddATMRequest atm);

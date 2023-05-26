@@ -15,6 +15,14 @@ namespace ATMCompass.Insfrastructure.Data
 
         public DbSet<Bank> Banks { get; set; }
 
-        public DbSet<Location> Locations { get; set; }
+        public DbSet<Node> Nodes { get; set; }
+
+        public DbSet<Brand> Brands { get; set; }
+
+        public DbSet<Operator> Operators { get; set; }
+
+        public DbSet<Address> Addresses { get; set; }
+
+        public DbSet<Currency> Currencies { get; set; }
     }
 }

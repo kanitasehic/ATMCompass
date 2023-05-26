@@ -1,9 +1,12 @@
 ﻿using ATMCompass.Core.Entities;
+using ATMCompass.Core.Models.ATMs.Requests;
 
 namespace ATMCompass.Core.Interfaces.Repositories
 {
     public interface IATMRepository
     {
+        Task<IList<ATM>> GetATMsAsync(GetATMsRequest request);
+
         Task<IList<string>> GetAllExternalIdsAsync();
 
         Task<ATM> GetATMById(int id);

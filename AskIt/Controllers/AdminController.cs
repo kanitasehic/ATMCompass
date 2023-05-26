@@ -9,7 +9,7 @@ namespace ATMCompass.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = Roles.ADMIN_ROLE)]
+    //[Authorize(Roles = Roles.ADMIN_ROLE)]
     [TypeFilter(typeof(ExceptionFilter))]
     public class AdminController : ControllerBase
     {
