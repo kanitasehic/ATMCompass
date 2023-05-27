@@ -8,7 +8,6 @@ using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
 using ATMCompass.Core.Models.GeoCalculator;
 using AutoMapper;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ATMCompass.Core.Services
 {
@@ -138,9 +137,9 @@ namespace ATMCompass.Core.Services
                     },
                     Bank = new Bank()
                     {
-                        Name = string.IsNullOrEmpty(rawAtm.Tags.BankName) ? rawAtm.Tags.BankName :
-                                    string.IsNullOrEmpty(rawAtm.Tags.OperatorName) ? rawAtm.Tags.OperatorName :
-                                    string.IsNullOrEmpty(rawAtm.Tags.BrandName) ? rawAtm.Tags.BrandName :
+                        Name = !string.IsNullOrEmpty(rawAtm.Tags.BankName) ? rawAtm.Tags.BankName :
+                                    !string.IsNullOrEmpty(rawAtm.Tags.OperatorName) ? rawAtm.Tags.OperatorName :
+                                    !string.IsNullOrEmpty(rawAtm.Tags.BrandName) ? rawAtm.Tags.BrandName :
                                     rawAtm.Tags.Fee,
                         Website = rawAtm.Tags.Website,
                         Email = rawAtm.Tags.Email
@@ -152,26 +151,38 @@ namespace ATMCompass.Core.Services
                         HouseNumber = rawAtm.Tags.AddressHouseNumber,
                         Postcode = rawAtm.Tags.AddressPostcode
                     },
-                    Operator = new Operator()
+                };
+
+                if ((rawAtm.Tags.OperatorName is not null) || (rawAtm.Tags.OperatorWikidata is not null) || (rawAtm.Tags.OperatorWikipedia is not null))
+                {
+                    atm.Operator = new Operator()
                     {
                         Name = rawAtm.Tags.OperatorName,
                         Wikidata = rawAtm.Tags.OperatorWikidata,
                         Wikipedia = rawAtm.Tags.OperatorWikipedia
-                    },
-                    Brand = new Brand()
+                    };
+                }
+
+                if ((rawAtm.Tags.BrandName is not null) || (rawAtm.Tags.BrandWikidata is not null) || (rawAtm.Tags.BrandWikipedia is not null))
+                {
+                    atm.Brand = new Brand()
                     {
                         Name = rawAtm.Tags.BrandName,
                         Wikidata = rawAtm.Tags.BrandWikidata,
                         Wikipedia = rawAtm.Tags.BrandWikipedia
-                    },
-                    Currency = new Currency()
+                    };
+                }
+
+                if ((rawAtm.Tags.CurrencyBAM is not null) || (rawAtm.Tags.CurrencyEUR is not null) || (rawAtm.Tags.CurrencyUSD is not null) || (rawAtm.Tags.CurrencyOthers is not null))
+                {
+                    atm.Currency = new Currency()
                     {
                         BAM = rawAtm.Tags.CurrencyBAM == "yes" ? true : rawAtm.Tags.CurrencyBAM == "no" ? false : null,
                         EUR = rawAtm.Tags.CurrencyEUR == "yes" ? true : rawAtm.Tags.CurrencyEUR == "no" ? false : null,
                         USD = rawAtm.Tags.CurrencyUSD == "yes" ? true : rawAtm.Tags.CurrencyUSD == "no" ? false : null,
                         Others = rawAtm.Tags.CurrencyOthers == "yes" ? true : rawAtm.Tags.CurrencyOthers == "no" ? false : null,
-                    }
-                };
+                    };
+                }
 
                 atms.Add(atm);
             }

@@ -10,6 +10,6 @@
 
         public string? Wikipedia { get; set; }
 
-        public virtual IEnumerable<ATM> ATMs { get; set; }
+        public virtual ATM? ATM { get; set; }
     }
 }

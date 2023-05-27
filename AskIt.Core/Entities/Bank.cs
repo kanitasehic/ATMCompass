@@ -10,6 +10,6 @@
 
         public string? Email { get; set; }
 
-        public virtual IEnumerable<ATM> ATMs { get; set; }
+        public virtual ATM? ATMs { get; set; }
     }
 }

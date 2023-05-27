@@ -15,7 +15,7 @@ namespace ATMCompass.Insfrastructure.HttpCLients
             var atms = await GetATMsAsync();
             var banksWithAtms = await GetBanksWithATMsAsync();
 
-            return (IList<GetATMFromOSMItem>)atms.Concat(banksWithAtms);
+            return atms.Concat(banksWithAtms).ToList();
         }
 
         private async Task<IList<GetATMFromOSMItem>> GetATMsAsync()

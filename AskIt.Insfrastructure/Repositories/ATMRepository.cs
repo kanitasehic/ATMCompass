@@ -62,9 +62,12 @@ namespace ATMCompass.Insfrastructure.Repositories
             await _dbContext.Nodes.AddAsync(atm.Node);
             await _dbContext.Banks.AddAsync(atm.Bank);
             await _dbContext.Addresses.AddAsync(atm.Address);
-            await _dbContext.Brands.AddAsync(atm.Brand);
-            await _dbContext.Operators.AddAsync(atm.Operator);
-            await _dbContext.Currencies.AddAsync(atm.Currency);
+            if(atm.Brand is not null)
+                await _dbContext.Brands.AddAsync(atm.Brand);
+            if (atm.Operator is not null)
+                await _dbContext.Operators.AddAsync(atm.Operator);
+            if (atm.Currency is not null)
+                await _dbContext.Currencies.AddAsync(atm.Currency);
             await _dbContext.ATMs.AddAsync(atm);
 
             await _dbContext.SaveChangesAsync();
