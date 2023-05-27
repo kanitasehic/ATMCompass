@@ -47,20 +47,54 @@ namespace ATMCompass.Core.Services
         {
             var atms = _mapper.Map<IList<GetATMResponse>>(await _ATMRepository.GetATMsAsync(request));
 
-            if (atms.Any())
+            if (atms.Any() && request.CurrentLon is not null && request.CurrentLat is not null)
             {
-                CalculateATMsDistances(request.CurrentLat, request.CurrentLon, ref atms);
+                CalculateATMsDistances((double)request.CurrentLat, (double)request.CurrentLon, ref atms);
                 atms = atms.OrderBy(a => a.Distance).Take(10).ToList();
             }
 
             return atms;
         }
 
-        public async Task<AddATMResponse> AddATMAsync(AddATMRequest atm)
+        public async Task AddATMAsync(AddATMRequest addAtmRequest)
         {
-            var newAtm = _mapper.Map<ATM>(atm);
+            var atm = _mapper.Map<ATM>(addAtmRequest);
 
-            return _mapper.Map<AddATMResponse>(await _ATMRepository.AddATMAsync(newAtm));
+            atm.Node = new Node
+            {
+                Lat = addAtmRequest.Lat,
+                Lon = addAtmRequest.Lon
+            };
+
+            atm.Bank = new Bank
+            {
+                Name = addAtmRequest.BankName,
+                Email = addAtmRequest.BankEmail,
+                Phone = addAtmRequest.BankPhone,
+                Website = addAtmRequest.BankWebsite
+            };
+
+            atm.Address = new Address
+            {
+                City = addAtmRequest.City,
+                Street = addAtmRequest.Street,
+                HouseNumber = addAtmRequest.HouseNumber,
+                Postcode = addAtmRequest.Postcode
+            };
+
+            if(addAtmRequest.CurrencyEUR is not null || addAtmRequest.CurrencyUSD is not null)
+            {
+                atm.Currency = new Currency
+                {
+                    BAM = true,
+                    EUR = addAtmRequest.CurrencyEUR,
+                    USD = addAtmRequest.CurrencyUSD
+                };
+            }
+
+            atm.ApprovedByAdmin = false;
+
+            await _ATMRepository.AddATMAsync(atm);
         }
 
         public async Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest)
@@ -104,7 +138,7 @@ namespace ATMCompass.Core.Services
             foreach (var atm in atms)
             {
                 var originalCoordinate = new Coordinate(currentLat, currentLon);
-                var destinationCoordinate = new Coordinate(double.Parse(atm.Lat), double.Parse(atm.Lon));
+                var destinationCoordinate = new Coordinate(atm.Lat, atm.Lon);
 
                 double distance = GeoCalculator.GetDistance(originalCoordinate, destinationCoordinate);
 
@@ -122,7 +156,6 @@ namespace ATMCompass.Core.Services
                 {
                     ExternalId = rawAtm.Id,
                     Fee = rawAtm.Tags.Fee,
-                    Phone = rawAtm.Tags.Phone,
                     Wheelchair = rawAtm.Tags.Wheelchair == "yes" ? true : rawAtm.Tags.Wheelchair == "no" ? false : null,
                     DriveThrough = rawAtm.Tags.DriveThrough == "yes" ? true : rawAtm.Tags.DriveThrough == "no" ? false : null,
                     CashIn = rawAtm.Tags.CashIn == "yes" ? true : rawAtm.Tags.CashIn == "no" ? false : null,
@@ -130,6 +163,7 @@ namespace ATMCompass.Core.Services
                     Covered = rawAtm.Tags.Covered == "yes" ? true : rawAtm.Tags.Covered == "no" ? false : null,
                     WithinBank = rawAtm.Tags.WithinBank == "yes" ? true : rawAtm.Tags.WithinBank == "no" ? false : null,
                     OpeningHours = rawAtm.Tags.OpeningHours,
+                    ApprovedByAdmin = true,
                     Node = new Node()
                     {
                         Lat = double.Parse(rawAtm.Lat),
@@ -142,7 +176,8 @@ namespace ATMCompass.Core.Services
                                     !string.IsNullOrEmpty(rawAtm.Tags.BrandName) ? rawAtm.Tags.BrandName :
                                     rawAtm.Tags.Fee,
                         Website = rawAtm.Tags.Website,
-                        Email = rawAtm.Tags.Email
+                        Email = rawAtm.Tags.Email,
+                        Phone = rawAtm.Tags.Phone
                     },
                     Address = new Address()
                     {

@@ -4,6 +4,7 @@ using ATMCompass.Insfrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATMCompass.Insfrastructure.Data.Migrations
 {
     [DbContext(typeof(ATMCompassDbContext))]
-    partial class ATMCompassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527095949_Column_Added")]
+    partial class Column_Added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,6 +100,9 @@ namespace ATMCompass.Insfrastructure.Data.Migrations
                     b.Property<int?>("OperatorId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool?>("Wheelchair")
                         .HasColumnType("bit");
 
@@ -144,9 +149,6 @@ namespace ATMCompass.Insfrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Website")

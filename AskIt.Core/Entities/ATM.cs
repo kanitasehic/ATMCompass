@@ -32,8 +32,6 @@
 
         public string? Fee { get; set; }
 
-        public string? Phone { get; set; }
-
         public bool? Wheelchair { get; set; }
 
         public bool? DriveThrough { get; set; }
@@ -47,5 +45,7 @@
         public bool? WithinBank { get; set; }
 
         public string? OpeningHours { get; set; }
+
+        public bool ApprovedByAdmin { get; set; }
     }
 }

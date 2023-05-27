@@ -28,14 +28,6 @@ namespace ATMCompass.Controllers
             return NoContent();
         }
 
-        [HttpPost("atms")]
-        public async Task<IActionResult> AddATM([FromBody] AddATMRequest request)
-        {
-            var atm = await _ATMService.AddATMAsync(request);
-
-            return Ok(atm);
-        }
-
         [HttpPut("atms/{id}")]
         public async Task<IActionResult> UpdateATM([FromBody] UpdateATMRequest request, [FromRoute] int id)
         {

@@ -9,7 +9,7 @@ namespace ATMCompass.Core.Interfaces.Services
 
         Task SynchronizeATMDataAsync();
 
-        Task<AddATMResponse> AddATMAsync(AddATMRequest atm);
+        Task AddATMAsync(AddATMRequest atm);
 
         Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest);
 

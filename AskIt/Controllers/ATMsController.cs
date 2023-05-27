@@ -23,5 +23,12 @@ namespace ATMCompass.Controllers
             var atms = await _ATMService.GetATMsAsync(request);
             return Ok(atms);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddATM([FromBody] AddATMRequest request)
+        {
+            await _ATMService.AddATMAsync(request);
+            return NoContent();
+        }
     }
 }
