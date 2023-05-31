@@ -1,9 +1,11 @@
-﻿namespace ATMCompass.Core.Models.ATMs.Responses
+﻿using ATMCompass.Core.Models.GeoCalculator;
+
+namespace ATMCompass.Core.Models.ATMs.Responses
 {
     public class GetCannibalATMsResponse
     {
-        public IList<GetATMResponse> ATMs { get; set; }
+        public IList<GetATMResponse> Atms { get; set; }
 
-        //public int Boundary { get; set; }
+        public IList<Coordinate> BoundaryCoordinates { get; set; }
     }
 }

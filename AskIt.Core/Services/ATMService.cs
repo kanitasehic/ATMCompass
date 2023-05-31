@@ -5,6 +5,7 @@ using ATMCompass.Core.Interfaces.Services;
 using ATMCompass.Core.Models.ATMs.OverpassAPI;
 using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
+using ATMCompass.Core.Models.GeoCalculator;
 using AutoMapper;
 
 
@@ -59,9 +60,13 @@ namespace ATMCompass.Core.Services
         public async Task<GetCannibalATMsResponse> GetCannibalATMsAsync(GetCannibalATMsRequest request)
         {
             var atms = _mapper.Map<List<GetATMResponse>>(await _ATMRepository.GetCannibalATMsAsync(request));
-            //var getBoundary
+            var boundaryString = _ATMRepository.GetBoundary(request);
 
-            return new GetCannibalATMsResponse { ATMs = atms };
+            return new GetCannibalATMsResponse()
+            {
+                Atms = atms,
+                BoundaryCoordinates = GetBoundaryCoordinates(boundaryString)
+            };
         }
 
         public async Task AddATMAsync(AddATMRequest addAtmRequest)
@@ -146,6 +151,27 @@ namespace ATMCompass.Core.Services
             }
 
             return atms;
+        }
+
+        private IList<Coordinate> GetBoundaryCoordinates(string boundaryString)
+        {
+            boundaryString = boundaryString.Replace("POLYGON ((", "");
+            boundaryString = boundaryString.Replace("))", "");
+
+            var splittedBoundaryCoordinates = boundaryString.Split(", ");
+
+            var boundaryCoordinates = new List<Coordinate>();
+            foreach(var splittedCoordinate in splittedBoundaryCoordinates)
+            {
+                var splittedLatAndLon = splittedCoordinate.Split(' ');
+                var lat = splittedLatAndLon[0];
+                var lon = splittedLatAndLon[1];
+
+                var coordinate = new Coordinate(double.Parse(lat), double.Parse(lon));
+                boundaryCoordinates.Add(coordinate);
+            }
+
+            return boundaryCoordinates;
         }
     }
 }

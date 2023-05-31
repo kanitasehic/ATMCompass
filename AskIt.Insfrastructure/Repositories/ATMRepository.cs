@@ -71,6 +71,11 @@ namespace ATMCompass.Insfrastructure.Repositories
             return await _dbContext.ATMs.FromSqlRaw($"EXEC GetCannibals {request.CenterLat}, {request.CenterLon}, '{request.BankName}', {request.RadiusInKilometers}").ToListAsync();
         }
 
+        public string GetBoundary(GetCannibalATMsRequest request)
+        {
+            return _dbContext.Set<SqlValueReturn<string>>().FromSqlRaw($"EXEC GetBoundary {request.CenterLat}, {request.CenterLon}, {request.RadiusInKilometers}").AsEnumerable().First().Value;
+        }
+
         private void FilterATMs(ref IQueryable<ATM> query, GetATMsRequest request)
         {
             ;
