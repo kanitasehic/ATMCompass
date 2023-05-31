@@ -16,21 +16,9 @@ namespace ATMCompass.Core.Models.ATMs.Requests
         [Required]
         public string City { get; set; }
 
-        public string? BankEmail { get; set; }
-
-        public string? BankPhone { get; set; }
-
-        public string? BankWebsite { get; set; }
-
         public string? Street { get; set; }
 
         public string? HouseNumber { get; set; }
-
-        public string? Postcode { get; set; }
-
-        public bool? CurrencyEUR { get; set; }
-
-        public bool? CurrencyUSD { get; set; }
 
         public bool? Wheelchair { get; set; }
 

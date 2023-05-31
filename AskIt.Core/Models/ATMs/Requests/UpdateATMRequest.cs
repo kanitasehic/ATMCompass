@@ -15,7 +15,5 @@
         public bool? WithinBank { get; set; }
 
         public string? OpeningHours { get; set; }
-
-        public bool? ApprovedByAdmin { get; set; }
     }
 }

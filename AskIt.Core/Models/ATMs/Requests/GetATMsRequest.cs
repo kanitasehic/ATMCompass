@@ -10,10 +10,6 @@
 
         public string? Location { get; set; }
 
-        public bool? CurrencyEUR { get; set; }
-
-        public bool? CurrencyUSD { get; set; }
-
         public bool? Wheelchair { get; set; }
 
         public bool? DriveThrough { get; set; }

@@ -14,5 +14,7 @@ namespace ATMCompass.Core.Interfaces.Services
         Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest);
 
         Task DeleteATMAsync(int id);
+
+        Task<GetCannibalATMsResponse> GetCannibalATMsAsync(GetCannibalATMsRequest request);
     }
 }

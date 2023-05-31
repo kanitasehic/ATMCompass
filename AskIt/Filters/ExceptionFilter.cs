@@ -20,14 +20,6 @@ namespace ATMCompass.Filters
             {
                 statusCode = (int)HttpStatusCode.BadRequest;
             }
-            else if (exception is NotAllowedException)
-            {
-                statusCode = (int)HttpStatusCode.Forbidden;
-            }
-            else if (exception is NotAuthenticatedException)
-            {
-                statusCode = (int)HttpStatusCode.Unauthorized;
-            }
             else
             {
                 statusCode = (int)HttpStatusCode.InternalServerError;

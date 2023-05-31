@@ -1,13 +1,12 @@
 ﻿using ATMCompass.Core.Entities;
 using ATMCompass.Core.Exceptions;
-using ATMCompass.Core.Helpers;
 using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Interfaces.Services;
 using ATMCompass.Core.Models.ATMs.OverpassAPI;
 using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
-using ATMCompass.Core.Models.GeoCalculator;
 using AutoMapper;
+
 
 namespace ATMCompass.Core.Services
 {
@@ -45,7 +44,8 @@ namespace ATMCompass.Core.Services
 
         public async Task<IList<GetATMResponse>> GetATMsAsync(GetATMsRequest request)
         {
-            var atms = _mapper.Map<IList<GetATMResponse>>(await _ATMRepository.GetATMsAsync(request));
+            var atms = _mapper.Map<List<GetATMResponse>>(await _ATMRepository.GetATMsAsync(request));
+
 
             if (atms.Any() && request.CurrentLon is not null && request.CurrentLat is not null)
             {
@@ -56,43 +56,17 @@ namespace ATMCompass.Core.Services
             return atms;
         }
 
+        public async Task<GetCannibalATMsResponse> GetCannibalATMsAsync(GetCannibalATMsRequest request)
+        {
+            var atms = _mapper.Map<List<GetATMResponse>>(await _ATMRepository.GetCannibalATMsAsync(request));
+            //var getBoundary
+
+            return new GetCannibalATMsResponse { ATMs = atms };
+        }
+
         public async Task AddATMAsync(AddATMRequest addAtmRequest)
         {
             var atm = _mapper.Map<ATM>(addAtmRequest);
-
-            atm.Node = new Node
-            {
-                Lat = addAtmRequest.Lat,
-                Lon = addAtmRequest.Lon
-            };
-
-            atm.Bank = new Bank
-            {
-                Name = addAtmRequest.BankName,
-                Email = addAtmRequest.BankEmail,
-                Phone = addAtmRequest.BankPhone,
-                Website = addAtmRequest.BankWebsite
-            };
-
-            atm.Address = new Address
-            {
-                City = addAtmRequest.City,
-                Street = addAtmRequest.Street,
-                HouseNumber = addAtmRequest.HouseNumber,
-                Postcode = addAtmRequest.Postcode
-            };
-
-            if(addAtmRequest.CurrencyEUR is not null || addAtmRequest.CurrencyUSD is not null)
-            {
-                atm.Currency = new Currency
-                {
-                    BAM = true,
-                    EUR = addAtmRequest.CurrencyEUR,
-                    USD = addAtmRequest.CurrencyUSD
-                };
-            }
-
-            atm.ApprovedByAdmin = false;
 
             await _ATMRepository.AddATMAsync(atm);
         }
@@ -133,16 +107,11 @@ namespace ATMCompass.Core.Services
             return atms;
         }
 
-        private void CalculateATMsDistances(double currentLat, double currentLon, ref IList<GetATMResponse> atms)
+        private void CalculateATMsDistances(double currentLat, double currentLon, ref List<GetATMResponse> atms)
         {
             foreach (var atm in atms)
             {
-                var originalCoordinate = new Coordinate(currentLat, currentLon);
-                var destinationCoordinate = new Coordinate(atm.Lat, atm.Lon);
-
-                double distance = GeoCalculator.GetDistance(originalCoordinate, destinationCoordinate);
-
-                atm.Distance = distance;
+                atm.Distance = _ATMRepository.GetDistance(currentLat.ToString(), currentLon.ToString(), atm.Lat.ToString(), atm.Lon.ToString());
             }
         }
 
@@ -155,7 +124,6 @@ namespace ATMCompass.Core.Services
                 var atm = new ATM()
                 {
                     ExternalId = rawAtm.Id,
-                    Fee = rawAtm.Tags.Fee,
                     Wheelchair = rawAtm.Tags.Wheelchair == "yes" ? true : rawAtm.Tags.Wheelchair == "no" ? false : null,
                     DriveThrough = rawAtm.Tags.DriveThrough == "yes" ? true : rawAtm.Tags.DriveThrough == "no" ? false : null,
                     CashIn = rawAtm.Tags.CashIn == "yes" ? true : rawAtm.Tags.CashIn == "no" ? false : null,
@@ -163,61 +131,16 @@ namespace ATMCompass.Core.Services
                     Covered = rawAtm.Tags.Covered == "yes" ? true : rawAtm.Tags.Covered == "no" ? false : null,
                     WithinBank = rawAtm.Tags.WithinBank == "yes" ? true : rawAtm.Tags.WithinBank == "no" ? false : null,
                     OpeningHours = rawAtm.Tags.OpeningHours,
-                    ApprovedByAdmin = true,
-                    Node = new Node()
-                    {
-                        Lat = double.Parse(rawAtm.Lat),
-                        Lon = double.Parse(rawAtm.Lon)
-                    },
-                    Bank = new Bank()
-                    {
-                        Name = !string.IsNullOrEmpty(rawAtm.Tags.BankName) ? rawAtm.Tags.BankName :
+                    Lat = double.Parse(rawAtm.Lat),
+                    Lon = double.Parse(rawAtm.Lon),
+                    BankName = !string.IsNullOrEmpty(rawAtm.Tags.BankName) ? rawAtm.Tags.BankName :
                                     !string.IsNullOrEmpty(rawAtm.Tags.OperatorName) ? rawAtm.Tags.OperatorName :
                                     !string.IsNullOrEmpty(rawAtm.Tags.BrandName) ? rawAtm.Tags.BrandName :
                                     rawAtm.Tags.Fee,
-                        Website = rawAtm.Tags.Website,
-                        Email = rawAtm.Tags.Email,
-                        Phone = rawAtm.Tags.Phone
-                    },
-                    Address = new Address()
-                    {
-                        City = rawAtm.Tags.AddressCity,
-                        Street = rawAtm.Tags.AddressStreet,
-                        HouseNumber = rawAtm.Tags.AddressHouseNumber,
-                        Postcode = rawAtm.Tags.AddressPostcode
-                    },
+                    City = rawAtm.Tags.AddressCity,
+                    Street = rawAtm.Tags.AddressStreet,
+                    HouseNumber = rawAtm.Tags.AddressHouseNumber,
                 };
-
-                if ((rawAtm.Tags.OperatorName is not null) || (rawAtm.Tags.OperatorWikidata is not null) || (rawAtm.Tags.OperatorWikipedia is not null))
-                {
-                    atm.Operator = new Operator()
-                    {
-                        Name = rawAtm.Tags.OperatorName,
-                        Wikidata = rawAtm.Tags.OperatorWikidata,
-                        Wikipedia = rawAtm.Tags.OperatorWikipedia
-                    };
-                }
-
-                if ((rawAtm.Tags.BrandName is not null) || (rawAtm.Tags.BrandWikidata is not null) || (rawAtm.Tags.BrandWikipedia is not null))
-                {
-                    atm.Brand = new Brand()
-                    {
-                        Name = rawAtm.Tags.BrandName,
-                        Wikidata = rawAtm.Tags.BrandWikidata,
-                        Wikipedia = rawAtm.Tags.BrandWikipedia
-                    };
-                }
-
-                if ((rawAtm.Tags.CurrencyBAM is not null) || (rawAtm.Tags.CurrencyEUR is not null) || (rawAtm.Tags.CurrencyUSD is not null) || (rawAtm.Tags.CurrencyOthers is not null))
-                {
-                    atm.Currency = new Currency()
-                    {
-                        BAM = rawAtm.Tags.CurrencyBAM == "yes" ? true : rawAtm.Tags.CurrencyBAM == "no" ? false : null,
-                        EUR = rawAtm.Tags.CurrencyEUR == "yes" ? true : rawAtm.Tags.CurrencyEUR == "no" ? false : null,
-                        USD = rawAtm.Tags.CurrencyUSD == "yes" ? true : rawAtm.Tags.CurrencyUSD == "no" ? false : null,
-                        Others = rawAtm.Tags.CurrencyOthers == "yes" ? true : rawAtm.Tags.CurrencyOthers == "no" ? false : null,
-                    };
-                }
 
                 atms.Add(atm);
             }

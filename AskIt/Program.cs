@@ -1,18 +1,12 @@
-using ATMCompass.Core.Configuration;
 using ATMCompass.Core.Mappings;
 using ATMCompass.Extensions;
 using ATMCompass.Insfrastructure.Data;
-using ATMCompass.Core.Helpers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var AllowSpecificOrigins = "_allowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
-
-var appSettings = new AppSettings();
-builder.Configuration.Bind(appSettings);
 
 builder.Services.ConfigureCorsPolicy(AllowSpecificOrigins);
 
@@ -21,11 +15,10 @@ builder.Services.AddDbContext<ATMCompassDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.SetupAuthentication(appSettings);
 
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfiles)));
 
-builder.Services.RegisterServices(appSettings);
+builder.Services.RegisterServices();
 
 builder.Services.RegisterRepositories();
 
@@ -46,8 +39,6 @@ if (app.Environment.IsDevelopment())
 }
 
 UpdateDatabase(app);
-
-SeedData(app, appSettings);
 
 app.UseHttpsRedirection();
 
@@ -72,16 +63,4 @@ static void UpdateDatabase(IApplicationBuilder app)
     using ATMCompassDbContext context = serviceScope.ServiceProvider.GetService<ATMCompassDbContext>();
 
     context.Database.Migrate();
-}
-static async void SeedData(IApplicationBuilder app, AppSettings appSettings)
-{
-    using IServiceScope serviceScope = app.ApplicationServices
-    .GetRequiredService<IServiceScopeFactory>()
-    .CreateScope();
-
-    var userManager = serviceScope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-    var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
-
-    await DbHelper.SeedAdminRole(roleManager);
-    await DbHelper.SeedAdminUser(userManager, appSettings.AdminCredentials);
 }

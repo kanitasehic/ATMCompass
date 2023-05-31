@@ -1,10 +1,10 @@
 ﻿using ATMCompass.Core.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ATMCompass.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ATMCompass.Insfrastructure.Data
 {
-    public class ATMCompassDbContext : IdentityDbContext
+    public class ATMCompassDbContext : DbContext
     {
         public ATMCompassDbContext(DbContextOptions options) : base(options)
         {
@@ -13,16 +13,11 @@ namespace ATMCompass.Insfrastructure.Data
 
         public DbSet<ATM> ATMs { get; set; }
 
-        public DbSet<Bank> Banks { get; set; }
-
-        public DbSet<Node> Nodes { get; set; }
-
-        public DbSet<Brand> Brands { get; set; }
-
-        public DbSet<Operator> Operators { get; set; }
-
-        public DbSet<Address> Addresses { get; set; }
-
-        public DbSet<Currency> Currencies { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SqlValueReturn<bool>>().HasNoKey().ToView(null);
+            modelBuilder.Entity<SqlValueReturn<string>>().HasNoKey().ToView(null);
+            modelBuilder.Entity<SqlValueReturn<double>>().HasNoKey().ToView(null);
+        }
     }
 }

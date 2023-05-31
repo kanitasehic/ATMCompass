@@ -6,6 +6,18 @@ namespace ATMCompass.Core.Helpers
     public static class GeoCalculator
     {
         private static double EarthRadiusInKilometers = 6371.0;
+        private const double MetersPerKilometer = 1000.0; // Number of meters in one kilometer
+
+        public static double DegreesToMeters(double distanceInDegrees, double latitude)
+        {
+            double latRadians = Math.PI * latitude / 180.0;
+
+            double latDegreeLengthInKilometers = 2.0 * Math.PI * EarthRadiusInKilometers * Math.Cos(latRadians);
+
+            double distanceInMeters = distanceInDegrees * latDegreeLengthInKilometers;
+
+            return distanceInMeters;
+        }
 
         private static double GetDistance(double originLatitude, double originLongitude, double destinationLatitude, double destinationLongitude, int decimalPlaces = 1)
         {

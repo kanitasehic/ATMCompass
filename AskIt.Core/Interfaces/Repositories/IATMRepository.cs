@@ -18,5 +18,9 @@ namespace ATMCompass.Core.Interfaces.Repositories
         Task UpdateATMAsync(ATM atm);
 
         Task DeleteATMAsync(ATM atm);
+
+        double GetDistance(string t1Lat, string t1Lon, string t2Lat, string t2Lon);
+
+        Task<IList<ATM>> GetCannibalATMsAsync(GetCannibalATMsRequest request);
     }
 }

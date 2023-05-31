@@ -1,8 +1,9 @@
-﻿using ATMCompass.Insfrastructure.Data;
-using ATMCompass.Core.Entities;
+﻿using ATMCompass.Core.Entities;
 using ATMCompass.Core.Interfaces.Repositories;
-using Microsoft.EntityFrameworkCore;
+using ATMCompass.Core.Models;
 using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Insfrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ATMCompass.Insfrastructure.Repositories
 {
@@ -17,11 +18,16 @@ namespace ATMCompass.Insfrastructure.Repositories
 
         public async Task<IList<ATM>> GetATMsAsync(GetATMsRequest request)
         {
-            var query = _dbContext.ATMs.Where(a => a.ApprovedByAdmin == request.ApprovedByAdmin);
+            var query = _dbContext.ATMs.AsQueryable();
 
             FilterATMs(ref query, request);
 
             return await query.ToListAsync();
+        }
+
+        public double GetDistance(string t1Lat, string t1Lon, string t2Lat, string t2Lon)
+        {
+            return _dbContext.Set<SqlValueReturn<double>>().FromSqlRaw($"EXEC GetDistance {t1Lat}, {t1Lon}, {t2Lat}, {t2Lon}").AsEnumerable().First().Value;
         }
 
         public async Task<IList<string>> GetAllExternalIdsAsync()
@@ -36,29 +42,12 @@ namespace ATMCompass.Insfrastructure.Repositories
 
         public async Task AddMultipleATMsAsync(IList<ATM> atms)
         {
-            foreach (var atm in atms)
-            {
-                await AddATMAsync(atm);
-            }
-        } 
+            await _dbContext.AddRangeAsync(atms);
+            await _dbContext.SaveChangesAsync();
+        }
 
         public async Task<ATM> AddATMAsync(ATM atm)
         {
-            await _dbContext.Nodes.AddAsync(atm.Node);
-            await _dbContext.Banks.AddAsync(atm.Bank);
-            await _dbContext.Addresses.AddAsync(atm.Address);
-            if(atm.Brand is not null)
-            {
-                await _dbContext.Brands.AddAsync(atm.Brand);
-            }
-            if (atm.Operator is not null)
-            {
-                await _dbContext.Operators.AddAsync(atm.Operator);
-            }
-            if (atm.Currency is not null)
-            {
-                await _dbContext.Currencies.AddAsync(atm.Currency);
-            }
             await _dbContext.ATMs.AddAsync(atm);
 
             await _dbContext.SaveChangesAsync();
@@ -74,33 +63,24 @@ namespace ATMCompass.Insfrastructure.Repositories
         public async Task DeleteATMAsync(ATM atm)
         {
             _dbContext.ATMs.Remove(atm);
-            _dbContext.Nodes.Remove(atm.Node);
-            _dbContext.Banks.Remove(atm.Bank);
-            _dbContext.Addresses.Remove(atm.Address);
-            if (atm.Brand is not null)
-            {
-                _dbContext.Brands.Remove(atm.Brand);
-            }
-            if (atm.Operator is not null)
-            {
-                _dbContext.Operators.Remove(atm.Operator);
-            }
-            if (atm.Currency is not null)
-            {
-                _dbContext.Currencies.Remove(atm.Currency);
-            }
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IList<ATM>> GetCannibalATMsAsync(GetCannibalATMsRequest request)
+        {
+            return await _dbContext.ATMs.FromSqlRaw($"EXEC GetCannibals {request.CenterLat}, {request.CenterLon}, '{request.BankName}', {request.RadiusInKilometers}").ToListAsync();
         }
 
         private void FilterATMs(ref IQueryable<ATM> query, GetATMsRequest request)
         {
+            ;
             if (request.BankName is not null)
             {
-                query = query.Where(a => a.Bank.Name == request.BankName);
+                query = query.Where(a => a.BankName == request.BankName);
             }
             if (request.Location is not null)
             {
-                query = query.Where(a => a.Address.City == request.Location);
+                query = query.Where(a => a.City == request.Location);
             }
             if (request.Wheelchair is not null)
             {
@@ -125,14 +105,6 @@ namespace ATMCompass.Insfrastructure.Repositories
             if (request.WithinBank is not null)
             {
                 query = query.Where(a => a.WithinBank != null && a.WithinBank == request.WithinBank);
-            }
-            if (request.CurrencyEUR is not null)
-            {
-                query = query.Where(a => a.Currency != null && a.Currency.EUR != null && a.Currency.EUR == request.CurrencyEUR);
-            }
-            if (request.CurrencyUSD is not null)
-            {
-                query = query.Where(a => a.Currency != null && a.Currency.USD != null && a.Currency.USD == request.CurrencyUSD);
             }
         }
     }

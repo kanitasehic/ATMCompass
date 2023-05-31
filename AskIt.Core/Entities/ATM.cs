@@ -6,31 +6,17 @@
 
         public string ExternalId { get; set; }
 
-        public int NodeId { get; set; }
+        public double Lat { get; set; }
 
-        public virtual Node? Node { get; set; }
+        public double Lon { get; set; }
 
-        public int? BankId { get; set; }
+        public string? BankName { get; set; }
 
-        public virtual Bank? Bank { get; set; }
+        public string? City { get; set; }
 
-        public int? AddressId { get; set; }
+        public string? Street { get; set; }
 
-        public virtual Address? Address { get; set; }
-
-        public int? BrandId { get; set; }
-
-        public virtual Brand? Brand { get; set; }
-
-        public int? OperatorId { get; set; }
-
-        public virtual Operator? Operator { get; set; }
-
-        public int? CurrencyId { get; set; }
-
-        public virtual Currency? Currency { get; set; }
-
-        public string? Fee { get; set; }
+        public string? HouseNumber { get; set; }
 
         public bool? Wheelchair { get; set; }
 
@@ -45,7 +31,5 @@
         public bool? WithinBank { get; set; }
 
         public string? OpeningHours { get; set; }
-
-        public bool ApprovedByAdmin { get; set; }
     }
 }
