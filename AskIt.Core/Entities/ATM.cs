@@ -6,17 +6,15 @@
 
         public string ExternalId { get; set; }
 
-        public double Lat { get; set; }
+        public int NodeId { get; set; }
 
-        public double Lon { get; set; }
+        public Node Node { get; set; }
 
         public string? BankName { get; set; }
 
-        public string? City { get; set; }
+        public int AddressId { get; set; }
 
-        public string? Street { get; set; }
-
-        public string? HouseNumber { get; set; }
+        public Address Address { get; set; }
 
         public bool? Wheelchair { get; set; }
 

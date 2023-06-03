@@ -10,12 +10,15 @@ namespace ATMCompass.Core.Mappings
         public MappingProfiles()
         {
             // ATMs
-            CreateMap<AddATMRequest, ATM>();
-
             CreateMap<UpdateATMRequest, ATM>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-            CreateMap<ATM, GetATMResponse>();
+            CreateMap<ATM, GetATMResponse>()
+                .ForMember(dest => dest.Lat, opt => opt.MapFrom(src => src.Node.Lat))
+                .ForMember(dest => dest.Lon, opt => opt.MapFrom(src => src.Node.Lon))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Address.Street))
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Address.HouseNumber));
         }
     }
 }

@@ -4,6 +4,7 @@ using ATMCompass.Insfrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATMCompass.Insfrastructure.Data.Migrations
 {
     [DbContext(typeof(ATMCompassDbContext))]
-    partial class ATMCompassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230603214753_AdditionalTables")]
+    partial class AdditionalTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -9,12 +9,14 @@ namespace ATMCompass.Core.Interfaces.Services
 
         Task SynchronizeATMDataAsync();
 
-        Task AddATMAsync(AddATMRequest atm);
-
         Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest);
 
         Task DeleteATMAsync(int id);
 
         Task<GetCannibalATMsResponse> GetCannibalATMsAsync(GetCannibalATMsRequest request);
+
+        Task<IList<string>> GetAllLocationsAsync();
+
+        Task<IList<string>> GetAllBanksAsync();
     }
 }

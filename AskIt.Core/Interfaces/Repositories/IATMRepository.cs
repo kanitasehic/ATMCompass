@@ -24,5 +24,9 @@ namespace ATMCompass.Core.Interfaces.Repositories
         Task<IList<ATM>> GetCannibalATMsAsync(GetCannibalATMsRequest request);
 
         string GetBoundary(GetCannibalATMsRequest request);
+
+        Task<IList<string>> GetAllLocationsAsync();
+
+        Task<IList<string>> GetAllBanksAsync();
     }
 }

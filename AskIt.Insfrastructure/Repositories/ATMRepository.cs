@@ -42,12 +42,16 @@ namespace ATMCompass.Insfrastructure.Repositories
 
         public async Task AddMultipleATMsAsync(IList<ATM> atms)
         {
-            await _dbContext.AddRangeAsync(atms);
-            await _dbContext.SaveChangesAsync();
+            foreach (var atm in atms)
+            {
+                await AddATMAsync(atm);
+            }
         }
 
         public async Task<ATM> AddATMAsync(ATM atm)
         {
+            await _dbContext.Nodes.AddAsync(atm.Node);
+            await _dbContext.Addresses.AddAsync(atm.Address);
             await _dbContext.ATMs.AddAsync(atm);
 
             await _dbContext.SaveChangesAsync();
@@ -68,7 +72,14 @@ namespace ATMCompass.Insfrastructure.Repositories
 
         public async Task<IList<ATM>> GetCannibalATMsAsync(GetCannibalATMsRequest request)
         {
-            return await _dbContext.ATMs.FromSqlRaw($"EXEC GetCannibals {request.CenterLat}, {request.CenterLon}, '{request.BankName}', {request.RadiusInKilometers}").ToListAsync();
+            var atms = await _dbContext.ATMs.FromSqlRaw($"EXEC GetCannibals {request.CenterLat}, {request.CenterLon}, '{request.BankName}', {request.RadiusInKilometers}").ToListAsync();
+            var result = new List<ATM>();
+            foreach (var atm in atms)
+            {
+                result.Add(await _dbContext.ATMs.Where(a => a.Id == atm.Id).Include(a => a.Node).Include(a => a.Address).FirstOrDefaultAsync());
+            }
+
+            return result;
         }
 
         public string GetBoundary(GetCannibalATMsRequest request)
@@ -76,16 +87,29 @@ namespace ATMCompass.Insfrastructure.Repositories
             return _dbContext.Set<SqlValueReturn<string>>().FromSqlRaw($"EXEC GetBoundary {request.CenterLat}, {request.CenterLon}, {request.RadiusInKilometers}").AsEnumerable().First().Value;
         }
 
+        public async Task<IList<string>> GetAllLocationsAsync()
+        {
+            return await _dbContext.Addresses.Select(a => a.City).Distinct().ToListAsync();
+        }
+
+        public async Task<IList<string>> GetAllBanksAsync()
+        {
+            return await _dbContext.ATMs.Select(a => a.BankName).Distinct().ToListAsync();
+        }
+
         private void FilterATMs(ref IQueryable<ATM> query, GetATMsRequest request)
         {
-            ;
+            query = query
+                .Include(a => a.Node)
+                .Include(a => a.Address);
+
             if (request.BankName is not null)
             {
                 query = query.Where(a => a.BankName == request.BankName);
             }
             if (request.Location is not null)
             {
-                query = query.Where(a => a.City == request.Location);
+                query = query.Where(a => a.Address.City == request.Location);
             }
             if (request.Wheelchair is not null)
             {

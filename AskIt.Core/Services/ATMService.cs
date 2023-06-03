@@ -69,13 +69,6 @@ namespace ATMCompass.Core.Services
             };
         }
 
-        public async Task AddATMAsync(AddATMRequest addAtmRequest)
-        {
-            var atm = _mapper.Map<ATM>(addAtmRequest);
-
-            await _ATMRepository.AddATMAsync(atm);
-        }
-
         public async Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest)
         {
             var atm = await _ATMRepository.GetATMById(id);
@@ -96,6 +89,16 @@ namespace ATMCompass.Core.Services
                 throw new NotFoundException($"ATM with id {id} does not exist.");
 
             await _ATMRepository.DeleteATMAsync(atm);
+        }
+
+        public async Task<IList<string>> GetAllLocationsAsync()
+        {
+            return await _ATMRepository.GetAllLocationsAsync();
+        }
+
+        public async Task<IList<string>> GetAllBanksAsync()
+        {
+            return await _ATMRepository.GetAllBanksAsync();
         }
 
         private async Task<IList<GetATMFromOSMItem>> GetATMsWithUpdatedLocationAsync(IList<GetATMFromOSMItem> atms)
@@ -136,15 +139,21 @@ namespace ATMCompass.Core.Services
                     Covered = rawAtm.Tags.Covered == "yes" ? true : rawAtm.Tags.Covered == "no" ? false : null,
                     WithinBank = rawAtm.Tags.WithinBank == "yes" ? true : rawAtm.Tags.WithinBank == "no" ? false : null,
                     OpeningHours = rawAtm.Tags.OpeningHours,
-                    Lat = double.Parse(rawAtm.Lat),
-                    Lon = double.Parse(rawAtm.Lon),
+                    Node = new Node()
+                    {
+                        Lat = double.Parse(rawAtm.Lat),
+                        Lon = double.Parse(rawAtm.Lon)
+                    },
                     BankName = !string.IsNullOrEmpty(rawAtm.Tags.BankName) ? rawAtm.Tags.BankName :
                                     !string.IsNullOrEmpty(rawAtm.Tags.OperatorName) ? rawAtm.Tags.OperatorName :
                                     !string.IsNullOrEmpty(rawAtm.Tags.BrandName) ? rawAtm.Tags.BrandName :
                                     rawAtm.Tags.Fee,
-                    City = rawAtm.Tags.AddressCity,
-                    Street = rawAtm.Tags.AddressStreet,
-                    HouseNumber = rawAtm.Tags.AddressHouseNumber,
+                    Address = new Address()
+                    {
+                        City = rawAtm.Tags.AddressCity,
+                        Street = rawAtm.Tags.AddressStreet,
+                        HouseNumber = rawAtm.Tags.AddressHouseNumber
+                    }
                 };
 
                 atms.Add(atm);
@@ -164,8 +173,8 @@ namespace ATMCompass.Core.Services
             foreach(var splittedCoordinate in splittedBoundaryCoordinates)
             {
                 var splittedLatAndLon = splittedCoordinate.Split(' ');
-                var lat = splittedLatAndLon[0];
-                var lon = splittedLatAndLon[1];
+                var lat = splittedLatAndLon[1];
+                var lon = splittedLatAndLon[0];
 
                 var coordinate = new Coordinate(double.Parse(lat), double.Parse(lon));
                 boundaryCoordinates.Add(coordinate);

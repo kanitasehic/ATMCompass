@@ -13,6 +13,15 @@ namespace ATMCompass.Insfrastructure.Data
 
         public DbSet<ATM> ATMs { get; set; }
 
+        public DbSet<Node> Nodes { get; set; }
+
+        public DbSet<Address> Addresses { get; set; }
+
+        public DbSet<Transport> Transports { get; set; }
+
+        public DbSet<Accommodation> Accommodations { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SqlValueReturn<bool>>().HasNoKey().ToView(null);

@@ -18,27 +18,11 @@ namespace ATMCompass.Core.Models.ATMs.OverpassAPI
         [JsonProperty("email")]
         public string? Email { get; set; }
 
-        // BRAND
-
         [JsonProperty("brand")]
         public string? BrandName { get; set; }
 
-        [JsonProperty("brand:wikidata")]
-        public string? BrandWikidata { get; set; }
-
-        [JsonProperty("brand:wikipedia")]
-        public string? BrandWikipedia { get; set; }
-
-        // OPERATOR
-
         [JsonProperty("operator")]
         public string? OperatorName { get; set; }
-
-        [JsonProperty("operator:wikidata")]
-        public string? OperatorWikidata { get; set; }
-
-        [JsonProperty("operator:wikipedia")]
-        public string? OperatorWikipedia { get; set; }
 
         // ADDRESS
 
@@ -50,23 +34,6 @@ namespace ATMCompass.Core.Models.ATMs.OverpassAPI
 
         [JsonProperty("addr:housenumber")]
         public string? AddressHouseNumber { get; set; }
-
-        [JsonProperty("addr:postcode")]
-        public string? AddressPostcode { get; set; }
-
-        // CURRENCY
-
-        [JsonProperty("currency:BAM")]
-        public string? CurrencyBAM { get; set; }
-
-        [JsonProperty("currency:EUR")]
-        public string? CurrencyEUR { get; set; }
-
-        [JsonProperty("currency:USD")]
-        public string? CurrencyUSD { get; set; }
-
-        [JsonProperty("currency:others")]
-        public string? CurrencyOthers { get; set; }
 
         // ATM
 
@@ -93,6 +60,5 @@ namespace ATMCompass.Core.Models.ATMs.OverpassAPI
 
         [JsonProperty("atm")]
         public string? WithinBank { get; set; }
-
     }
 }

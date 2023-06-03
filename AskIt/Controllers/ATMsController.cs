@@ -40,13 +40,6 @@ namespace ATMCompass.Controllers
             return Ok(atms);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddATM([FromBody] AddATMRequest request)
-        {
-            await _ATMService.AddATMAsync(request);
-            return NoContent();
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateATM([FromBody] UpdateATMRequest request, [FromRoute] int id)
         {
@@ -61,6 +54,22 @@ namespace ATMCompass.Controllers
             await _ATMService.DeleteATMAsync(id);
 
             return NoContent();
+        }
+
+        [HttpGet("locations")]
+        public async Task<IActionResult> GetAllATMLocations()
+        {
+            var locations = await _ATMService.GetAllLocationsAsync();
+
+            return Ok(locations);
+        }
+
+        [HttpGet("banks")]
+        public async Task<IActionResult> GetAllATMBanks()
+        {
+            var banks = await _ATMService.GetAllBanksAsync();
+
+            return Ok(banks);
         }
     }
 }
