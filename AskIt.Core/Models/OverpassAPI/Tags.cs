@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace ATMCompass.Core.Models.ATMs.OverpassAPI
+namespace ATMCompass.Core.Models.OverpassAPI
 {
-    public sealed class ATMTags
+    public sealed class Tags
     {
-        // BANK
-
         [JsonProperty("name")]
-        public string? BankName { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty("phone")]
         public string? Phone { get; set; }
@@ -24,8 +22,6 @@ namespace ATMCompass.Core.Models.ATMs.OverpassAPI
         [JsonProperty("operator")]
         public string? OperatorName { get; set; }
 
-        // ADDRESS
-
         [JsonProperty("addr:city")]
         public string? AddressCity { get; set; }
 
@@ -34,8 +30,6 @@ namespace ATMCompass.Core.Models.ATMs.OverpassAPI
 
         [JsonProperty("addr:housenumber")]
         public string? AddressHouseNumber { get; set; }
-
-        // ATM
 
         [JsonProperty("fee")]
         public string? Fee { get; set; }
@@ -60,5 +54,7 @@ namespace ATMCompass.Core.Models.ATMs.OverpassAPI
 
         [JsonProperty("atm")]
         public string? WithinBank { get; set; }
+
+        public string? Type { get; set; }
     }
 }

@@ -28,5 +28,13 @@ namespace ATMCompass.Core.Interfaces.Repositories
         Task<IList<string>> GetAllLocationsAsync();
 
         Task<IList<string>> GetAllBanksAsync();
+
+        Task<Accommodation> AddAccommodationAsync(Accommodation accommodation);
+
+        Task AddMultipleAccommodationsAsync(IList<Accommodation> accommodations);
+
+        Task<Transport> AddTransportAsync(Transport transport);
+
+        Task AddMultipleTransportsAsync(IList<Transport> transports);
     }
 }

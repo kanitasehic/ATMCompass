@@ -9,6 +9,10 @@ namespace ATMCompass.Core.Interfaces.Services
 
         Task SynchronizeATMDataAsync();
 
+        Task SynchronizeTransportDataAsync();
+
+        Task SynchronizeAccommodationDataAsync();
+
         Task UpdateATMAsync(int id, UpdateATMRequest atmUpdateRequest);
 
         Task DeleteATMAsync(int id);

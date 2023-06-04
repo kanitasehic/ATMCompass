@@ -48,6 +48,22 @@ namespace ATMCompass.Insfrastructure.Repositories
             }
         }
 
+        public async Task AddMultipleTransportsAsync(IList<Transport> transports)
+        {
+            foreach (var transport in transports)
+            {
+                await AddTransportAsync(transport);
+            }
+        }
+
+        public async Task AddMultipleAccommodationsAsync(IList<Accommodation> accommodations)
+        {
+            foreach (var accommodation in accommodations)
+            {
+                await AddAccommodationAsync(accommodation);
+            }
+        }
+
         public async Task<ATM> AddATMAsync(ATM atm)
         {
             await _dbContext.Nodes.AddAsync(atm.Node);
@@ -56,6 +72,26 @@ namespace ATMCompass.Insfrastructure.Repositories
 
             await _dbContext.SaveChangesAsync();
             return atm;
+        }
+
+        public async Task<Transport> AddTransportAsync(Transport transport)
+        {
+            await _dbContext.Nodes.AddAsync(transport.Node);
+            await _dbContext.Addresses.AddAsync(transport.Address);
+            await _dbContext.Transports.AddAsync(transport);
+
+            await _dbContext.SaveChangesAsync();
+            return transport;
+        }
+
+        public async Task<Accommodation> AddAccommodationAsync(Accommodation accommodation)
+        {
+            await _dbContext.Nodes.AddAsync(accommodation.Node);
+            await _dbContext.Addresses.AddAsync(accommodation.Address);
+            await _dbContext.Accommodations.AddAsync(accommodation);
+
+            await _dbContext.SaveChangesAsync();
+            return accommodation;
         }
 
         public async Task UpdateATMAsync(ATM atm)

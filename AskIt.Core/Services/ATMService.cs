@@ -2,10 +2,10 @@
 using ATMCompass.Core.Exceptions;
 using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Interfaces.Services;
-using ATMCompass.Core.Models.ATMs.OverpassAPI;
 using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
 using ATMCompass.Core.Models.GeoCalculator;
+using ATMCompass.Core.Models.OverpassAPI;
 using AutoMapper;
 
 
@@ -38,7 +38,7 @@ namespace ATMCompass.Core.Services
 
             var updatedRawAtmData = await GetATMsWithUpdatedLocationAsync(rawAtmData);
 
-            var atms = GetMappedData(updatedRawAtmData);
+            var atms = GetMappedATMData(updatedRawAtmData);
 
             await _ATMRepository.AddMultipleATMsAsync(atms);
         }
@@ -101,7 +101,25 @@ namespace ATMCompass.Core.Services
             return await _ATMRepository.GetAllBanksAsync();
         }
 
-        private async Task<IList<GetATMFromOSMItem>> GetATMsWithUpdatedLocationAsync(IList<GetATMFromOSMItem> atms)
+        public async Task SynchronizeTransportDataAsync()
+        {
+            var rawTransportData = await _overpassAPIClient.GetTransportsInBosniaAndHerzegovinaAsync();
+
+            var transports = GetMappedTransportData(rawTransportData);
+
+            await _ATMRepository.AddMultipleTransportsAsync(transports);
+        }
+
+        public async  Task SynchronizeAccommodationDataAsync()
+        {
+            var rawAccommodationData = await _overpassAPIClient.GetAccommodationsInBosniaAndHerzegovinaAsync();
+
+            var accommodations = GetMappedAccommodationData(rawAccommodationData);
+
+            await _ATMRepository.AddMultipleAccommodationsAsync(accommodations);
+        }
+
+        private async Task<IList<GetObjectFromOSMItem>> GetATMsWithUpdatedLocationAsync(IList<GetObjectFromOSMItem> atms)
         {
             foreach (var atm in atms)
             {
@@ -123,7 +141,7 @@ namespace ATMCompass.Core.Services
             }
         }
 
-        private IList<ATM> GetMappedData(IList<GetATMFromOSMItem> rawAtms)
+        private IList<ATM> GetMappedATMData(IList<GetObjectFromOSMItem> rawAtms)
         {
             var atms = new List<ATM>();
 
@@ -144,7 +162,7 @@ namespace ATMCompass.Core.Services
                         Lat = double.Parse(rawAtm.Lat),
                         Lon = double.Parse(rawAtm.Lon)
                     },
-                    BankName = !string.IsNullOrEmpty(rawAtm.Tags.BankName) ? rawAtm.Tags.BankName :
+                    BankName = !string.IsNullOrEmpty(rawAtm.Tags.Name) ? rawAtm.Tags.Name :
                                     !string.IsNullOrEmpty(rawAtm.Tags.OperatorName) ? rawAtm.Tags.OperatorName :
                                     !string.IsNullOrEmpty(rawAtm.Tags.BrandName) ? rawAtm.Tags.BrandName :
                                     rawAtm.Tags.Fee,
@@ -160,6 +178,70 @@ namespace ATMCompass.Core.Services
             }
 
             return atms;
+        }
+
+        private IList<Transport> GetMappedTransportData(IList<GetObjectFromOSMItem> rawTransportObjects)
+        {
+            var transports = new List<Transport>();
+
+            foreach (var rawTransport in rawTransportObjects)
+            {
+                var transport = new Transport()
+                {
+                    Node = new Node()
+                    {
+                        Lat = rawTransport.Lat is not null ? double.Parse(rawTransport.Lat) : rawTransport.Center.Lat,
+                        Lon = rawTransport.Lon is not null ? double.Parse(rawTransport.Lon) : rawTransport.Center.Lon
+                    },
+                    Name = !string.IsNullOrEmpty(rawTransport.Tags.Name) ? rawTransport.Tags.Name :
+                                    !string.IsNullOrEmpty(rawTransport.Tags.OperatorName) ? rawTransport.Tags.OperatorName :
+                                    !string.IsNullOrEmpty(rawTransport.Tags.BrandName) ? rawTransport.Tags.BrandName :
+                                    rawTransport.Tags.Fee,
+                    Address = new Address()
+                    {
+                        City = rawTransport.Tags.AddressCity,
+                        Street = rawTransport.Tags.AddressStreet,
+                        HouseNumber = rawTransport.Tags.AddressHouseNumber
+                    },
+                    Type = rawTransport.Tags.Type
+                };
+
+                transports.Add(transport);
+            }
+
+            return transports;
+        }
+
+        private IList<Accommodation> GetMappedAccommodationData(IList<GetObjectFromOSMItem> rawAccommodationObjects)
+        {
+            var accommodations = new List<Accommodation>();
+
+            foreach (var rawAccommodation in rawAccommodationObjects)
+            {
+                var transport = new Accommodation()
+                {
+                    Node = new Node()
+                    {
+                        Lat = rawAccommodation.Lat is not null ? double.Parse(rawAccommodation.Lat) : rawAccommodation.Center.Lat,
+                        Lon = rawAccommodation.Lon is not null ? double.Parse(rawAccommodation.Lon) : rawAccommodation.Center.Lon
+                    },
+                    Name = !string.IsNullOrEmpty(rawAccommodation.Tags.Name) ? rawAccommodation.Tags.Name :
+                                    !string.IsNullOrEmpty(rawAccommodation.Tags.OperatorName) ? rawAccommodation.Tags.OperatorName :
+                                    !string.IsNullOrEmpty(rawAccommodation.Tags.BrandName) ? rawAccommodation.Tags.BrandName :
+                                    rawAccommodation.Tags.Fee,
+                    Address = new Address()
+                    {
+                        City = rawAccommodation.Tags.AddressCity,
+                        Street = rawAccommodation.Tags.AddressStreet,
+                        HouseNumber = rawAccommodation.Tags.AddressHouseNumber
+                    },
+                    Type = rawAccommodation.Tags.Type
+                };
+
+                accommodations.Add(transport);
+            }
+
+            return accommodations;
         }
 
         private IList<Coordinate> GetBoundaryCoordinates(string boundaryString)

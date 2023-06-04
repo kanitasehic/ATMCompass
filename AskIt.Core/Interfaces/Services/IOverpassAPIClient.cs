@@ -1,9 +1,13 @@
-﻿using ATMCompass.Core.Models.ATMs.OverpassAPI;
+﻿using ATMCompass.Core.Models.OverpassAPI;
 
 namespace ATMCompass.Core.Interfaces.Services
 {
     public interface IOverpassAPIClient
     {
-        Task<IList<GetATMFromOSMItem>> GetATMsInBosniaAndHerzegovinaAsync();
+        Task<IList<GetObjectFromOSMItem>> GetATMsInBosniaAndHerzegovinaAsync();
+
+        Task<IList<GetObjectFromOSMItem>> GetTransportsInBosniaAndHerzegovinaAsync();
+
+        Task<IList<GetObjectFromOSMItem>> GetAccommodationsInBosniaAndHerzegovinaAsync();
     }
 }
