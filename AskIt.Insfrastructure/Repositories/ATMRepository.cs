@@ -1,7 +1,9 @@
 ﻿using ATMCompass.Core.Entities;
 using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Models;
+using ATMCompass.Core.Models.Accommodations.Requests;
 using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Core.Models.Transports.Requests;
 using ATMCompass.Insfrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -125,12 +127,38 @@ namespace ATMCompass.Insfrastructure.Repositories
 
         public async Task<IList<string>> GetAllLocationsAsync()
         {
-            return await _dbContext.Addresses.Select(a => a.City).Distinct().ToListAsync();
+            return await _dbContext.Addresses.Where(a => a.City != null).Select(a => a.City).Distinct().ToListAsync();
         }
 
         public async Task<IList<string>> GetAllBanksAsync()
         {
             return await _dbContext.ATMs.Select(a => a.BankName).Distinct().ToListAsync();
+        }
+
+        public async Task<IList<Accommodation>> GetAccommodationsAsync(GetAccommodationsRequest request)
+        {
+            var type = request.Type is null ? "NULL" : $"'{request.Type}'";
+            var accommodations = await _dbContext.Accommodations.FromSqlRaw($"EXEC GetAccommodationsWithoutATMsAround {request.RadiusInKilometers}, {type}, '{request.Location}'").ToListAsync();
+            var result = new List<Accommodation>();
+            foreach (var acc in accommodations)
+            {
+                result.Add(await _dbContext.Accommodations.Where(a => a.Id == acc.Id).Include(a => a.Node).Include(a => a.Address).FirstOrDefaultAsync());
+            }
+
+            return result;
+        }
+
+        public async Task<IList<Transport>> GetTransportsAsync(GetTransportsRequest request)
+        {
+            var type = request.Type is null ? "NULL" : $"'{request.Type}'";
+            var transports = await _dbContext.Transports.FromSqlRaw($"EXEC GetTransportsWithoutATMsAround {request.RadiusInKilometers}, {type}, '{request.Location}'").ToListAsync();
+            var result = new List<Transport>();
+            foreach (var tr in transports)
+            {
+                result.Add(await _dbContext.Transports.Where(a => a.Id == tr.Id).Include(a => a.Node).Include(a => a.Address).FirstOrDefaultAsync());
+            }
+
+            return result;
         }
 
         private void FilterATMs(ref IQueryable<ATM> query, GetATMsRequest request)

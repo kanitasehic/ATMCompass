@@ -1,5 +1,7 @@
 ﻿using ATMCompass.Core.Entities;
+using ATMCompass.Core.Models.Accommodations.Requests;
 using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Core.Models.Transports.Requests;
 
 namespace ATMCompass.Core.Interfaces.Repositories
 {
@@ -36,5 +38,9 @@ namespace ATMCompass.Core.Interfaces.Repositories
         Task<Transport> AddTransportAsync(Transport transport);
 
         Task AddMultipleTransportsAsync(IList<Transport> transports);
+
+        Task<IList<Accommodation>> GetAccommodationsAsync(GetAccommodationsRequest request);
+
+        Task<IList<Transport>> GetTransportsAsync(GetTransportsRequest request);
     }
 }

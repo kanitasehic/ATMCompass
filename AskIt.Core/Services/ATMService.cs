@@ -2,10 +2,14 @@
 using ATMCompass.Core.Exceptions;
 using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Models.Accommodations.Requests;
+using ATMCompass.Core.Models.Accommodations.Responses;
 using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
 using ATMCompass.Core.Models.GeoCalculator;
 using ATMCompass.Core.Models.OverpassAPI;
+using ATMCompass.Core.Models.Transports.Requests;
+using ATMCompass.Core.Models.Transports.Responses;
 using AutoMapper;
 
 
@@ -36,7 +40,7 @@ namespace ATMCompass.Core.Services
                 rawAtmData = rawAtmData.Where(a => !existingAtmExternalIds.Contains(a.Id)).ToList();
             }
 
-            var updatedRawAtmData = await GetATMsWithUpdatedLocationAsync(rawAtmData);
+            var updatedRawAtmData = await GetObjectsWithUpdatedLocationAsync(rawAtmData);
 
             var atms = GetMappedATMData(updatedRawAtmData);
 
@@ -105,32 +109,49 @@ namespace ATMCompass.Core.Services
         {
             var rawTransportData = await _overpassAPIClient.GetTransportsInBosniaAndHerzegovinaAsync();
 
-            var transports = GetMappedTransportData(rawTransportData);
+            var updatedRawTransportData = await GetObjectsWithUpdatedLocationAsync(rawTransportData);
+
+            var transports = GetMappedTransportData(updatedRawTransportData);
 
             await _ATMRepository.AddMultipleTransportsAsync(transports);
         }
 
-        public async  Task SynchronizeAccommodationDataAsync()
+        public async Task SynchronizeAccommodationDataAsync()
         {
             var rawAccommodationData = await _overpassAPIClient.GetAccommodationsInBosniaAndHerzegovinaAsync();
 
-            var accommodations = GetMappedAccommodationData(rawAccommodationData);
+            var updatedRawAccommodationData = await GetObjectsWithUpdatedLocationAsync(rawAccommodationData);
+
+            var accommodations = GetMappedAccommodationData(updatedRawAccommodationData);
 
             await _ATMRepository.AddMultipleAccommodationsAsync(accommodations);
         }
 
-        private async Task<IList<GetObjectFromOSMItem>> GetATMsWithUpdatedLocationAsync(IList<GetObjectFromOSMItem> atms)
+        public async Task<IList<GetAccommodationResponse>> GetAccommodationsWithoutATMsAroundAsync(GetAccommodationsRequest request)
         {
-            foreach (var atm in atms)
+            return _mapper.Map<List<GetAccommodationResponse>>(await _ATMRepository.GetAccommodationsAsync(request));
+        }
+
+        public async Task<IList<GetTransportResponse>> GetTransportsWithoutATMsAroundAsync(GetTransportsRequest request)
+        {
+            return _mapper.Map<List<GetTransportResponse>>(await _ATMRepository.GetTransportsAsync(request));
+        }
+
+        private async Task<IList<GetObjectFromOSMItem>> GetObjectsWithUpdatedLocationAsync(IList<GetObjectFromOSMItem> objects)
+        {
+            foreach (var obj in objects)
             {
-                if (atm.Tags.AddressCity is null)
+                if (obj.Tags.AddressCity is null)
                 {
-                    var location = await _geoCodeClient.GetLocationByCoordinatesAsync(atm.Lat, atm.Lon);
-                    atm.Tags.AddressCity = string.IsNullOrEmpty(location.City) ? location.Locality : location.City;
+                    var lat = obj.Lat is not null ? obj.Lat : obj.Center.Lat.ToString();
+                    var lon = obj.Lon is not null ? obj.Lon : obj.Center.Lon.ToString();
+
+                    var location = await _geoCodeClient.GetLocationByCoordinatesAsync(lat, lon);
+                    obj.Tags.AddressCity = string.IsNullOrEmpty(location.City) ? location.Locality : location.City;
                 }
             }
 
-            return atms;
+            return objects;
         }
 
         private void CalculateATMsDistances(double currentLat, double currentLon, ref List<GetATMResponse> atms)

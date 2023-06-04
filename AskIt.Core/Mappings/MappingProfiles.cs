@@ -1,6 +1,8 @@
 ﻿using ATMCompass.Core.Entities;
+using ATMCompass.Core.Models.Accommodations.Responses;
 using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
+using ATMCompass.Core.Models.Transports.Responses;
 using AutoMapper;
 
 namespace ATMCompass.Core.Mappings
@@ -14,6 +16,20 @@ namespace ATMCompass.Core.Mappings
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<ATM, GetATMResponse>()
+                .ForMember(dest => dest.Lat, opt => opt.MapFrom(src => src.Node.Lat))
+                .ForMember(dest => dest.Lon, opt => opt.MapFrom(src => src.Node.Lon))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Address.Street))
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Address.HouseNumber));
+
+            CreateMap<Accommodation, GetAccommodationResponse>()
+                .ForMember(dest => dest.Lat, opt => opt.MapFrom(src => src.Node.Lat))
+                .ForMember(dest => dest.Lon, opt => opt.MapFrom(src => src.Node.Lon))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Address.Street))
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Address.HouseNumber));
+
+            CreateMap<Transport, GetTransportResponse>()
                 .ForMember(dest => dest.Lat, opt => opt.MapFrom(src => src.Node.Lat))
                 .ForMember(dest => dest.Lon, opt => opt.MapFrom(src => src.Node.Lon))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))

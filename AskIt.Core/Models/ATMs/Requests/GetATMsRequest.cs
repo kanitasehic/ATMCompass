@@ -21,7 +21,5 @@
         public bool? Covered { get; set; }
 
         public bool? WithinBank { get; set; }
-
-        public bool ApprovedByAdmin { get; set; }
     }
 }

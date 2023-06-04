@@ -1,4 +1,5 @@
 ﻿using ATMCompass.Core.Interfaces.Services;
+using ATMCompass.Core.Models.Transports.Requests;
 using ATMCompass.Filters;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,14 @@ namespace ATMCompass.Controllers
             await _ATMService.SynchronizeTransportDataAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("without-atms-around")]
+        public async Task<IActionResult> GetTransportsWithoutATMsAround([FromQuery] GetTransportsRequest request)
+        {
+            var transports = await _ATMService.GetTransportsWithoutATMsAroundAsync(request);
+
+            return Ok(transports);
         }
     }
 }
