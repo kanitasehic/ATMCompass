@@ -38,6 +38,7 @@ namespace ATMCompass.Extensions
             services.AddScoped<IOverpassAPIClient, OverpassAPIClient>();
             services.AddScoped<IGeoCodeClient, GeoCodeClient>();
             services.AddScoped<IATMService, ATMService>();
+            services.AddScoped<IGraphHopperClient, GraphHopperClient>();
         }
     }
 }

@@ -12,21 +12,22 @@ using ATMCompass.Core.Models.Transports.Requests;
 using ATMCompass.Core.Models.Transports.Responses;
 using AutoMapper;
 
-
 namespace ATMCompass.Core.Services
 {
     public class ATMService : IATMService
     {
         private readonly IOverpassAPIClient _overpassAPIClient;
         private readonly IGeoCodeClient _geoCodeClient;
+        private readonly IGraphHopperClient _graphHopperClient;
         private readonly IATMRepository _ATMRepository;
         private readonly IMapper _mapper;
-        public ATMService(IOverpassAPIClient overpassAPIClient, IGeoCodeClient geoCodeClient, IATMRepository ATMRepository, IMapper mapper)
+        public ATMService(IOverpassAPIClient overpassAPIClient, IGeoCodeClient geoCodeClient, IATMRepository ATMRepository, IMapper mapper, IGraphHopperClient graphHopperClient)
         {
             _overpassAPIClient = overpassAPIClient;
             _geoCodeClient = geoCodeClient;
             _ATMRepository = ATMRepository;
             _mapper = mapper;
+            _graphHopperClient = graphHopperClient;
         }
 
         public async Task SynchronizeATMDataAsync()
@@ -135,6 +136,27 @@ namespace ATMCompass.Core.Services
         public async Task<IList<GetTransportResponse>> GetTransportsWithoutATMsAroundAsync(GetTransportsRequest request)
         {
             return _mapper.Map<List<GetTransportResponse>>(await _ATMRepository.GetTransportsAsync(request));
+        }
+
+        public async Task SaveLocationFromGeoJsonAsync()
+        {
+            IList<Location> locations = _overpassAPIClient.GetLocationsFromGeoJson();
+            await _ATMRepository.AddLocationsAsync(locations);
+        }
+
+        public IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerCity()
+        {
+            return _ATMRepository.GetNumberOfATMsPerCity(); 
+        }
+
+        public IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerMunicipality()
+        {
+            return _ATMRepository.GetNumberOfATMsPerMunicipality();
+        }
+
+        public async Task<IList<List<Coordinate>>> GetIsohronesAsync(GetIsohronesRequest request)
+        {
+            return await _graphHopperClient.GetIsohronesAsync(request.TransportType, request.Lat, request.Lon);
         }
 
         private async Task<IList<GetObjectFromOSMItem>> GetObjectsWithUpdatedLocationAsync(IList<GetObjectFromOSMItem> objects)
@@ -273,7 +295,7 @@ namespace ATMCompass.Core.Services
             var splittedBoundaryCoordinates = boundaryString.Split(", ");
 
             var boundaryCoordinates = new List<Coordinate>();
-            foreach(var splittedCoordinate in splittedBoundaryCoordinates)
+            foreach (var splittedCoordinate in splittedBoundaryCoordinates)
             {
                 var splittedLatAndLon = splittedCoordinate.Split(' ');
                 var lat = splittedLatAndLon[1];

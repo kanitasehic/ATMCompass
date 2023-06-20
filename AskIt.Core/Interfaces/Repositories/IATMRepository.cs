@@ -1,6 +1,7 @@
 ﻿using ATMCompass.Core.Entities;
 using ATMCompass.Core.Models.Accommodations.Requests;
 using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Core.Models.ATMs.Responses;
 using ATMCompass.Core.Models.Transports.Requests;
 
 namespace ATMCompass.Core.Interfaces.Repositories
@@ -42,5 +43,17 @@ namespace ATMCompass.Core.Interfaces.Repositories
         Task<IList<Accommodation>> GetAccommodationsAsync(GetAccommodationsRequest request);
 
         Task<IList<Transport>> GetTransportsAsync(GetTransportsRequest request);
+
+        Task AddLocationsAsync(IList<Location> locations);
+
+        Task<IList<Location>> GetMunicipalitiesAsync();
+
+        Task<IList<Location>> GetCitiesAsync();
+
+        Task<IList<ATM>> GetATMsAsync();
+
+        IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerCity();
+
+        IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerMunicipality();
     }
 }

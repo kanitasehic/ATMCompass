@@ -3,6 +3,7 @@ using ATMCompass.Core.Interfaces.Repositories;
 using ATMCompass.Core.Models;
 using ATMCompass.Core.Models.Accommodations.Requests;
 using ATMCompass.Core.Models.ATMs.Requests;
+using ATMCompass.Core.Models.ATMs.Responses;
 using ATMCompass.Core.Models.Transports.Requests;
 using ATMCompass.Insfrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,31 @@ namespace ATMCompass.Insfrastructure.Repositories
             FilterATMs(ref query, request);
 
             return await query.ToListAsync();
+        }
+
+        public async Task<IList<ATM>> GetATMsAsync()
+        {
+            return await _dbContext.ATMs.Include(a => a.Node).ToListAsync();
+        }
+
+        public async Task<IList<Location>> GetCitiesAsync()
+        {
+            return await _dbContext.Locations.Where(l => l.Type == "City").ToListAsync();
+        }
+
+        public async Task<IList<Location>> GetMunicipalitiesAsync()
+        {
+            return await _dbContext.Locations.Where(l => l.Type == "Municipality").ToListAsync();
+        }
+
+        public IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerCity()
+        {
+            return _dbContext.Set<NumberOfATMsPerLocationResponse>().FromSqlRaw($"EXEC GetNumberOfATMsPerLocation 'City'").AsEnumerable().ToList();
+        }
+
+        public IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerMunicipality()
+        {
+            return _dbContext.Set<NumberOfATMsPerLocationResponse>().FromSqlRaw($"EXEC GetNumberOfATMsPerLocation 'Municipality'").AsEnumerable().ToList();
         }
 
         public double GetDistance(string t1Lat, string t1Lon, string t2Lat, string t2Lon)
@@ -159,6 +185,13 @@ namespace ATMCompass.Insfrastructure.Repositories
             }
 
             return result;
+        }
+
+        public async Task AddLocationsAsync(IList<Location> locations)
+        {
+            await _dbContext.Locations.AddRangeAsync(locations);
+
+            await _dbContext.SaveChangesAsync();
         }
 
         private void FilterATMs(ref IQueryable<ATM> query, GetATMsRequest request)

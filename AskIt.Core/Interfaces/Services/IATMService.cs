@@ -1,9 +1,13 @@
-﻿using ATMCompass.Core.Models.Accommodations.Requests;
+﻿using ATMCompass.Core.Models;
+using ATMCompass.Core.Models.Accommodations.Requests;
 using ATMCompass.Core.Models.Accommodations.Responses;
 using ATMCompass.Core.Models.ATMs.Requests;
 using ATMCompass.Core.Models.ATMs.Responses;
+using ATMCompass.Core.Models.GeoCalculator;
 using ATMCompass.Core.Models.Transports.Requests;
 using ATMCompass.Core.Models.Transports.Responses;
+using GeoJSON.Net.Feature;
+using GeoJSON.Net.Geometry;
 
 namespace ATMCompass.Core.Interfaces.Services
 {
@@ -30,5 +34,13 @@ namespace ATMCompass.Core.Interfaces.Services
         Task<IList<GetAccommodationResponse>> GetAccommodationsWithoutATMsAroundAsync(GetAccommodationsRequest request);
 
         Task<IList<GetTransportResponse>> GetTransportsWithoutATMsAroundAsync(GetTransportsRequest request);
+
+        Task SaveLocationFromGeoJsonAsync();
+
+        IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerCity();
+
+        IList<NumberOfATMsPerLocationResponse> GetNumberOfATMsPerMunicipality();
+
+        Task<IList<List<Coordinate>>> GetIsohronesAsync(GetIsohronesRequest request);
     }
 }

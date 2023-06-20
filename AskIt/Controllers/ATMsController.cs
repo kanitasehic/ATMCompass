@@ -71,5 +71,37 @@ namespace ATMCompass.Controllers
 
             return Ok(banks);
         }
+
+        [HttpPost("locations")]
+        public async Task<IActionResult> AddLocations()
+        {
+            await _ATMService.SaveLocationFromGeoJsonAsync();
+
+            return Ok();
+        }
+
+        [HttpGet("per-city")]
+        public async Task<IActionResult> GetNumberOfATMsPerCity()
+        {
+            var numberOfATMsPerCity = _ATMService.GetNumberOfATMsPerCity();
+
+            return Ok(numberOfATMsPerCity);
+        }
+
+        [HttpGet("per-municipality")]
+        public async Task<IActionResult> GetNumberOfATMsPerMunicipality()
+        {
+            var numberOfATMsPerMunicipality = _ATMService.GetNumberOfATMsPerMunicipality();
+
+            return Ok(numberOfATMsPerMunicipality);
+        }
+
+        [HttpGet("isohrones")]
+        public async Task<IActionResult> GetIsohrones([FromQuery] GetIsohronesRequest request)
+        {
+            var isohrones = await _ATMService.GetIsohronesAsync(request);
+
+            return Ok(isohrones);
+        }
     }
 }

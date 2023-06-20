@@ -1,4 +1,5 @@
-﻿using ATMCompass.Core.Models.OverpassAPI;
+﻿using ATMCompass.Core.Entities;
+using ATMCompass.Core.Models.OverpassAPI;
 
 namespace ATMCompass.Core.Interfaces.Services
 {
@@ -9,5 +10,7 @@ namespace ATMCompass.Core.Interfaces.Services
         Task<IList<GetObjectFromOSMItem>> GetTransportsInBosniaAndHerzegovinaAsync();
 
         Task<IList<GetObjectFromOSMItem>> GetAccommodationsInBosniaAndHerzegovinaAsync();
+
+        IList<Location> GetLocationsFromGeoJson();
     }
 }
